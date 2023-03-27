@@ -1,0 +1,137 @@
+/* 
+  CHROME NOTES STYLES
+  Current theme inspired by https://github.com/folke/tokyonight.nvim.
+  Customize away.
+*/
+
+body {
+  /* some fonts: https://www.w3.org/Style/Examples/007/fonts.en.html */
+  font-family: 'Andale Mono', monospace;
+  background-color: #24283B;
+  color: #7AA2F7;
+}
+* {
+  /* give all text the same font by default */
+  font-family: inherit; 
+}
+/* links */
+a:link {
+  color: #61B5AA;
+}
+a:visited {
+  color: #61B5AA;
+}
+a:hover {
+  color: #8168B3;
+}
+a:active {
+  color: #9e96b0;
+}
+textarea {
+    background-color: #1e1e3b;
+    color: #7AA2F7;
+    border-color: #8168B3;
+}
+button {
+    background-color: #8FB862;
+    color: #24283B;
+    border-radius: 12px;
+    border-top-color: #9e96b0;
+    border-bottom-color: #1e1e3b;
+}
+input {
+  background-color: #1e1e3b;
+  color: #987cd0;
+}
+input::placeholder {
+  color: #7aa2f792;
+}
+/* ative and inactive tab-button color */
+.tabbutton.active { 
+  background-color: #193001;
+  color: #8FB862
+}
+/* I use default button for inactive */
+/* .tabbutton.inactive {}  */
+
+/* change highlight color when searching */
+mark {
+  background: #DC8B5D !important;
+}
+
+/* SETTINGS & BACKUP BUTTON */
+.utility-button {
+  background-color: #8168B3;
+}
+
+
+/* NOTE PAD */
+.note {
+  flex: 1;
+  padding: 5px;
+  background-color: #24283B;
+}
+
+/* MARKDOWN PREVIEW */
+.preview {
+  padding: 5px;
+  /* overflow-y: auto; */ /*include for scrollbar on preview*/
+  width: 100%;
+  min-width: 300px;
+}
+
+/* SETTINGS MENU */
+.settings {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.settings-button {
+  position: absolute;
+}
+.settings-menu {
+  position: absolute;
+  top: 30px;
+  right: 5px;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 12px;
+  display: none;
+}
+.settings-menu label {
+  display: block;
+  margin-bottom: 10px;
+}
+.settings-menu input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+}
+
+/* SCROLLBARS */
+html::-webkit-scrollbar {
+  display: none !important;
+}
+body::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* TABS */
+.tabcontent { 
+  /* max width & height for chrome ext is 800px, 600px */
+  width: 800px;
+  height: 600px;
+/* You might not want to touch the below settings */
+  display: none;
+}
+.tabcontent:first-child {
+  display: block;
+}
+.note-container {
+  display: flex;
+  align-items: flex-start;
+}

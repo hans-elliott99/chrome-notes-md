@@ -1,0 +1,99 @@
+<!-- 
+  Simple Note-Taking Chrome Extension
+  Hans Elliott
+
+  To add your 'n'th tab, copy/paste to create a new text input in the SETTINGS
+  MENU / 'tab names' section, add a new button in the TAB BUTTONS section, and 
+  then add a new tab in the NOTEPADS section (see the example there).
+  Of course, you should change any digit in these chunks to match 'n'.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notepad</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- SEARCH BAR -->
+  <input type="text" id="search-bar" placeholder="Search tab...">
+  <!-- <button id="next-search-button">-></button> -->
+
+    <!-- SETTINGS MENU -->
+  <button id="settings-button" class="utility-button">Settings</button>
+
+  <div id="settings-menu" style="display: none;">
+    <!-- tab names -->
+    <label>Name 1:
+      <input type="text" id="tab-name-1" class="tab-name-input" value="Tab 1">
+    </label><br>
+    <label>Name 2:
+      <input type="text" id="tab-name-2" class="tab-name-input" value="Tab 2">
+    </label><br>
+    <label>Name 3:
+      <input type="text" id="tab-name-3" class="tab-name-input" value="Tab 1">
+    </label><br>
+    <label>Name 4:
+      <input type="text" id="tab-name-4" class="tab-name-input" value="Tab 2">
+    </label><br>
+  </div>
+
+  <!-- BACKUP BUTTON -->
+  <button class="utility-button backup-button" data-tab="1">Backup</button>
+  <button id="minimize-button" class="utility-button">Min</button>
+  
+  <!-- TAB BUTTONS-->
+  <div class="tab">
+    <button class="tabbutton" data-tab="1"><span>Tab 1</span></button>
+    <button class="tabbutton" data-tab="2"><span>Tab 2</span></button>
+    <button class="tabbutton" data-tab="3"><span>Tab 3</span></button>
+    <button class="tabbutton" data-tab="4"><span>Tab 4</span></button>
+  </div>
+
+
+  <!-- NOTEPADS -->
+  <!-- Ex: tab 1 -->
+  <div class="tabcontent" data-tab="1">
+    <div class="note-container">
+      <div class="note">
+        <textarea id="note-text-1" rows="20" cols="60"></textarea>
+      </div>
+      <div class="preview" id="preview-1"></div>
+    </div>
+  </div>
+  <!-- end tab 1 -->
+  
+  <div class="tabcontent" data-tab="2">
+    <div class="note-container">
+      <div class="note">
+        <textarea id="note-text-2" rows="20" cols="60"></textarea>
+      </div>
+      <div class="preview" id="preview-2"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" data-tab="3">
+    <div class="note-container">
+      <div class="note">
+        <textarea id="note-text-3" rows="20" cols="60"></textarea>
+      </div>
+      <div class="preview" id="preview-3"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" data-tab="4">
+    <div class="note-container">
+      <div class="note">
+        <textarea id="note-text-4" rows="20" cols="60"></textarea>
+      </div>
+      <div class="preview" id="preview-4"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="lib/marked.min.js"></script>
+  <script src="popup.js"></script>
+
+</body>
+</html>
