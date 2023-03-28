@@ -33,7 +33,14 @@ const tabNameInputs = document.querySelectorAll('.tab-name-input')
 
 // Globals for search bar
 const searchBar = document.getElementById('search-bar');
-// const searchButton = document.getElementById('next-search-button')
+const caseSensToggle = document.getElementById('case-checkbox');
+const replaceBar = document.getElementById('replace-bar');
+const replaceButton = document.getElementById('replace-button');
+let replaceIndex = 0; //index to start replacing text at.
+
+/*
+  HELPERS
+*/
 
 /* 
   FILE SYSTEM API
@@ -124,17 +131,53 @@ function loadLastTab() {
   })
 }
 
-// SEARCH
-function highlightMatches(tabNum, query) {
-  var preview = document.getElementById('preview-' + tabNum);
-  var note = document.getElementById('note-text-' + tabNum);
+/* SEARCH */
+function highlightMatches(tabNum, query, startIndex = 0) {
+  const preview = document.getElementById('preview-' + tabNum);
+  const note = document.getElementById('note-text-' + tabNum);
+  if (startIndex + query.length >= note.value.length) {
+    console.log("startIndex >= note.value.length");
+    startIndex = 0;
+    replaceIndex = 0;
+  }
   preview.innerHTML = marked.parse(note.value);
   if (query) {
-    var regex = new RegExp(query, 'gi');
-    preview.innerHTML = preview.innerHTML.replace(regex, function(match, offset) {
-      return '<mark>' + match + '</mark>';
+    const regexArgs = caseSensToggle.checked ? "g" : "gi"
+    const regex = new RegExp(query, regexArgs);
+    preview.innerHTML = preview.innerHTML.replace(regex, function(match, idx) {
+      if (idx > startIndex) {
+        return '<mark>' + match + '</mark>';
+      } else {
+        return match;
+      }
     });
   }
+}
+
+
+function replaceSelection(tabNum, newText, startIndex = 0) {
+  const note = document.getElementById('note-text-' + tabNum);
+  const preview = document.getElementById('preview-' + tabNum);
+  const match = preview.querySelector('mark'); // just replace first match rn
+  if (startIndex > note.value.length) {
+    startIndex = 0;
+    replaceIndex = 0; //global
+  }
+  var selectedText = match.innerText;
+  var start = note.value.slice(startIndex).indexOf(selectedText) + startIndex;
+  var end = start + selectedText.length;
+  var textBeforeMatch = note.value.slice(0, start);
+  var textAfterMatch = note.value.slice(end);
+  note.value = textBeforeMatch + newText + textAfterMatch;
+  preview.innerHTML = marked.parse(note.value);
+
+  // save data changes
+  chrome.storage.sync.set({ ["note-" + tabNum] : note.value });
+  
+  // highlight the next matches, taking care to start highlight & replacement 
+  // after the text we just replaced
+  replaceIndex = start + newText.length;
+  highlightMatches(tabNum, searchBar.value, replaceIndex);
 }
 
 
@@ -150,7 +193,6 @@ document.addEventListener("DOMContentLoaded", function() {
   // Restore any saved settings
   loadTabNames();
   loadLastTab();
-  console.log(backupButtons.length);
 
   // Load the notes from storage when the popup is opened
   for (let i = 0; i < noteTextareas.length; i++) {
@@ -191,7 +233,6 @@ document.addEventListener("DOMContentLoaded", function() {
     noteTextareas[i].addEventListener("input", function() {
       const noteText = noteTextareas[i].value;
       chrome.storage.sync.set({ ["note-" + (i+1)] : noteText }, function() {
-        // console.log("Note " + (i+1) + " saved.");
         previews[i].innerHTML = marked.parse(noteText);
       });
     });
@@ -223,12 +264,15 @@ document.addEventListener("DOMContentLoaded", function() {
   /* SEARCH */
   // add an event listener to the search bar
   searchBar.addEventListener("input", function() {
-    // get the search term from the search bar
-    highlightMatches(currentTabNum, searchBar.value);
+    highlightMatches(currentTabNum, searchBar.value, 0);
+    replaceIndex = 0;
   });
-  // searchButton.addEventListener('click', function() {
-  //   jumpToNextMatch(currentTabNum, searchBar.value);
-  // });
+  caseSensToggle.addEventListener('change', function() {
+    console.log("case sensitive search:", this.checked);  
+  })
+  replaceButton.addEventListener("click", function() {
+    replaceSelection(currentTabNum, replaceBar.value, replaceIndex);
+  })
 
   /* MINIMIZE */
   minButton.addEventListener('click', function() {
