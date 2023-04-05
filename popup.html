@@ -5,23 +5,21 @@
   To add your 'n'th tab, copy/paste to create a new text input in the SETTINGS
   MENU / 'tab names' section, add a new button in the TAB BUTTONS section, and 
   then add a new tab in the NOTEPADS section (see the example there).
-  Of course, you should change any digit in these chunks to match 'n'.
+  Then, change any digit that appears in these chunks to match 'n'.
 -->
 
 <!DOCTYPE html>
 <html>
 <head>
   <title>Notepad</title>
-  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="styles/popup.css">
+  <link rel="stylesheet" href="styles/prism.css">
 </head>
 <body>
 
   <!-- SEARCH BAR -->
   <input type="text" id="search-bar" placeholder="Search tab...">
-  <label>
-    <input type="checkbox" id="case-checkbox">
-    Case
-  </label>
+  <label><input type="checkbox" id="case-checkbox">Case</label>
     <!-- Replace -->
   <input type="text" id="replace-bar" placeholder="Replace next...">
   <button id="replace-button" class="utility-button">Replace</button>
@@ -39,23 +37,31 @@
       <input type="text" id="tab-name-2" class="tab-name-input" value="Tab 2">
     </label><br>
     <label>Name 3:
-      <input type="text" id="tab-name-3" class="tab-name-input" value="Tab 1">
+      <input type="text" id="tab-name-3" class="tab-name-input" value="Tab 3">
     </label><br>
     <label>Name 4:
-      <input type="text" id="tab-name-4" class="tab-name-input" value="Tab 2">
+      <input type="text" id="tab-name-4" class="tab-name-input" value="Tab 4">
+    </label><br>
+    <label>Name 5:
+      <input type="text" id="tab-name-5" class="tab-name-input" value="Tab 5">
+    </label><br>
+    <label>Name 6:
+      <input type="text" id="tab-name-6" class="tab-name-input" value="Tab 6">
     </label><br>
   </div>
 
-  <!-- BACKUP BUTTON -->
+  <!-- UTILITY BUTTONS -->
   <button class="utility-button backup-button" data-tab="1">Backup</button>
   <button id="minimize-button" class="utility-button">Min</button>
-  
+
   <!-- TAB BUTTONS-->
   <div class="tab">
     <button class="tabbutton" data-tab="1"><span>Tab 1</span></button>
     <button class="tabbutton" data-tab="2"><span>Tab 2</span></button>
     <button class="tabbutton" data-tab="3"><span>Tab 3</span></button>
     <button class="tabbutton" data-tab="4"><span>Tab 4</span></button>
+    <button class="tabbutton" data-tab="5"><span>Tab 5</span></button>
+    <button class="tabbutton" data-tab="6"><span>Tab 6</span></button>
   </div>
 
 
@@ -64,9 +70,13 @@
   <div class="tabcontent" data-tab="1">
     <div class="note-container">
       <div class="note">
-        <textarea id="note-text-1" rows="20" cols="60"></textarea>
+        <div class="note-preview" id="note-preview-1">
+          <div class="preview" id="preview-1"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-1"></textarea>
+          </div>
+        </div>
       </div>
-      <div class="preview" id="preview-1"></div>
     </div>
   </div>
   <!-- end tab 1 -->
@@ -74,32 +84,82 @@
   <div class="tabcontent" data-tab="2">
     <div class="note-container">
       <div class="note">
-        <textarea id="note-text-2" rows="20" cols="60"></textarea>
+        <div class="note-preview" id="note-preview-2">
+          <div class="preview" id="preview-2"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-2"></textarea>
+          </div>
+        </div>
       </div>
-      <div class="preview" id="preview-2"></div>
     </div>
   </div>
 
   <div class="tabcontent" data-tab="3">
     <div class="note-container">
       <div class="note">
-        <textarea id="note-text-3" rows="20" cols="60"></textarea>
+        <div class="note-preview" id="note-preview-3">
+          <div class="preview" id="preview-3"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-3"></textarea>
+          </div>
+        </div>
       </div>
-      <div class="preview" id="preview-3"></div>
     </div>
   </div>
 
   <div class="tabcontent" data-tab="4">
     <div class="note-container">
       <div class="note">
-        <textarea id="note-text-4" rows="20" cols="60"></textarea>
+        <div class="note-preview" id="note-preview-4">
+          <div class="preview" id="preview-4"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-4"></textarea>
+          </div>
+        </div>
       </div>
-      <div class="preview" id="preview-4"></div>
     </div>
   </div>
 
+  <div class="tabcontent" data-tab="5">
+    <div class="note-container">
+      <div class="note">
+        <div class="note-preview" id="note-preview-5">
+          <div class="preview" id="preview-5"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-5"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabcontent" data-tab="6">
+    <div class="note-container">
+      <div class="note">
+        <div class="note-preview" id="note-preview-6">
+          <div class="preview" id="preview-6"></div>
+          <div class="edit-mode">
+            <textarea id="note-text-6"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- 
+  <div class="tabcontent" data-tab="2">
+    <div class="note-container">
+      <div class="note">
+        <textarea id="note-text-2" rows="20" cols="60"></textarea>
+      </div>
+      <div class="preview" id="preview-2"></div>
+    </div>
+  </div> -->
+
   <!-- SCRIPTS -->
+  <!-- <script src="lib/api.js"></script> -->
   <script src="lib/marked.min.js"></script>
+  <script src="lib/prism.js"></script>
   <script src="popup.js"></script>
 
 </body>

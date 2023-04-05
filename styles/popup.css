@@ -27,13 +27,23 @@ a:hover {
 a:active {
   color: #9e96b0;
 }
-textarea {
+code { /* will be overwritten by prism.css if using syntax highlighting*/
+  background-color: #4b5274;
+  color: #bbcef7;
+  border-radius: 4px;
+  padding: 1px;
+}
+mark {
+  background: #DC8B5D !important;
+}
+textarea { /*text input box*/
     background-color: #1e1e3b;
     color: #7AA2F7;
     border-color: #8168B3;
     height: 500px;
+    width: 700px;
 }
-button {
+button { /*default button*/
     background-color: #8FB862;
     color: #24283B;
     border-radius: 12px;
@@ -41,13 +51,14 @@ button {
     border-bottom-color: #1e1e3b;
     cursor: pointer;
 }
-input {
+input { /*default text input*/
   background-color: #1e1e3b;
   color: #987cd0;
 }
-input::placeholder {
+input::placeholder { /*color of text input placeholder text*/
   color: #7aa2f792;
 }
+/*checkbox input style*/
 input[type=checkbox] {
   position: relative;
   cursor: pointer;
@@ -76,38 +87,33 @@ input[type=checkbox]:checked:after {
   left: 4px;
 }
 
+/* SCROLLBARS */
+html::-webkit-scrollbar {
+  display: none !important;
+}
+body::-webkit-scrollbar {
+  display: none !important;
+}
+
 /* ative and inactive tab-button color */
 .tabbutton.active { 
   background-color: #193001;
   color: #8FB862
 }
-/* I use default button for inactive */
+/* I use default button style for inactive buttons */
 /* .tabbutton.inactive {}  */
-
-/* change highlight color when searching */
-mark {
-  background: #DC8B5D !important;
-}
 
 /* SETTINGS & BACKUP BUTTON */
 .utility-button {
   background-color: #8168B3;
 }
 
-
-/* NOTE PAD */
-.note {
-  flex: 1;
-  padding: 5px;
-  background-color: #24283B;
-}
-
-/* MARKDOWN PREVIEW */
-.preview {
-  padding: 5px;
-  /* overflow-y: auto; */ /*include for scrollbar on preview*/
-  width: 100%;
-  min-width: 300px;
+/* SYNTAX HIGHLIGHTING */
+.hashtag {
+  background-color: #423f4955;
+  color: #899ecbbe;
+  border-radius: 5px;
+  padding: 0.5px;
 }
 
 /* SETTINGS MENU */
@@ -142,12 +148,22 @@ mark {
   border: 1px solid #ccc;
 }
 
-/* SCROLLBARS */
-html::-webkit-scrollbar {
-  display: none !important;
+
+/* NOTE PAD */
+.note {
+  flex: 1;
+  padding: 5px;
+  background-color: #24283B;
 }
-body::-webkit-scrollbar {
-  display: none !important;
+
+/* MARKDOWN PREVIEW */
+.preview {
+  flex: 1;
+  padding: 5px;
+  /* overflow-y: auto; */ /*include for scrollbar on preview*/
+  width: 100%;
+  min-width: 700px;
+  max-width: 700px;
 }
 
 /* TABS */
@@ -155,7 +171,6 @@ body::-webkit-scrollbar {
   /* max width & height for chrome ext is 800px, 600px */
   width: 800px;
   height: 600px;
-/* You might not want to touch the below settings */
   display: none;
 }
 .tabcontent:first-child {
@@ -164,4 +179,26 @@ body::-webkit-scrollbar {
 .note-container {
   display: flex;
   align-items: flex-start;
+}
+
+/* You might not want to touch the below settings */
+.note-preview {
+  position: relative;
+}
+
+.edit-mode {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.note-preview.editing .preview {
+  display: none;
+}
+
+.note-preview.editing .edit-mode {
+  display: block;
 }
