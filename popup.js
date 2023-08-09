@@ -17,12 +17,13 @@
 
 // General globals
 let currentTabNum = 1;
+let lastCursorPosition = 0;
 const tabButtons = document.querySelectorAll(".tabbutton");
 const tabContents = document.querySelectorAll(".tabcontent");
 const noteTextareas = document.querySelectorAll(".note textarea");
 const notePreviews = document.querySelectorAll(".note-preview");
 const backupButtons = document.getElementsByClassName('backup-button');
-const minButton = document.getElementById('minimize-button'); //minimize
+const minButton = document.getElementById('minimize-button');
 const previews = document.querySelectorAll('.preview'); //ie, markdown preview
 const default_msg = "# Welcome to Chrome Notes!  \n- Use `markdown` syntax to style your notes. See [markdownguide.org](https://www.markdownguide.org/basic-syntax/) for an introduction.  \n- You can use #hastags to tag your notes.  \n- You can create syntax-highlighted `code` chunks by surrounding a block with three backticks and providing the name of a common language. For example:\n```python\nprint('thanks for trying chrome notes')\n```\n- Chrome Notes has simple source code and can be easily customized by editing values in `popup.css`.  \n\nEnjoy!"
 
@@ -30,6 +31,8 @@ const default_msg = "# Welcome to Chrome Notes!  \n- Use `markdown` syntax to st
 const settingsButton = document.getElementById('settings-button');
 const settingsMenu = document.getElementById('settings-menu');
 const tabNameInputs = document.querySelectorAll('.tab-name-input')
+let tabNames = [];
+const lastBackupDT = document.getElementById("last-backup");
 
 // Globals for search bar
 const searchBar = document.getElementById('search-bar');
@@ -67,7 +70,7 @@ async function writeFile(fileHandle, contents) {
   await writable.write(contents);
   // Close the file, writing contents to disk
   await writable.close();
-  console.log("File saved.");
+  console.log("file saved succesfully");
 }
 
 async function backup() {
@@ -79,7 +82,7 @@ async function backup() {
     const promise = new Promise((resolve, reject) => {
       chrome.storage.sync.get(['note-' + i], function(data) {
         var noteText = data['note-' + i] || "";
-        combinedText += '<tab-'+i+'>\n\n' + noteText + '\n</tab-'+i+'>\n';
+        combinedText += '<tab-'+i+'-'+ tabNameInputs[i-1].value +'>\n\n' + noteText + '\n</tab-'+i+'>\n';
         resolve();
       });
     });
@@ -88,9 +91,14 @@ async function backup() {
   await Promise.all(promises);
   const blob = new Blob([combinedText], {type: 'text/plain'});
 
-  /*File picker window & download text*/
+  // File picker window & download text
   const fileHandle = await getSaveFileHandle();
   await writeFile(fileHandle, blob);
+  
+  // Save last backup info
+  const dt = new Date().toLocaleString();
+  chrome.storage.sync.set({ lastBackup: dt });
+  lastBackupDT.innerHTML = `Last manual backup: ${dt.toLocaleString()}`;
 }
 
 /* ////////////////////////////////////////////////////////////////////////////
@@ -126,6 +134,15 @@ function loadLastTab() {
     // Open last tab when popup is opened
     tabButtons[currentTabNum-1].click();
   })
+}
+
+function loadLastBackup() {
+  chrome.storage.sync.get(["lastBackup"], function(data) {
+    if (data.lastBackup) {
+      const dt = new Date(data.lastBackup).toLocaleString();
+      lastBackupDT.innerHTML = `Last manual backup: ${dt}`;
+    }
+  });
 }
 
 /* ////////////////////////////////////////////////////////////////////////////
@@ -185,7 +202,7 @@ function replaceSelection(tabNum, newText, startIndex = 0) {
 
 
 /*/////////////////////////////////////////////////////////////////////////////
-  SYNTAX HIGHLITING
+  SYNTAX HILIGHTING
 */
 
 // Highlight hastagged words with special hastag class
@@ -204,8 +221,8 @@ function syntaxHighlightCode(tabNum) {
     const code = codeBlocks[i];
     const language = code.getAttribute('class');
     if (language) {
-      // If we explicitly require a language to be identified, we can have diff
-      // types of code blocks. ie, `txt` can be styled differently than ```py...
+      // If explicitly require a language to be identified, can have diff
+      // types of code blocks. so, `txt` can be styled differently than ```py...
       Prism.highlightElement(code);
     }// else {
     //   Prism.highlightElement(code);
@@ -276,29 +293,52 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Toggle Between Text-Entry & Markdown Preview
+
+  // Point and shoot //
   for (let i = 0; i < notePreviews.length; i++) {
     var preview = notePreviews[i].querySelector(".preview");
     var noteTextarea = noteTextareas[i];
+    // click to enter text editor
     preview.addEventListener("click", function(event) {
       notePreviews[i].classList.add("editing");
+      noteTextareas[i].setSelectionRange(lastCursorPosition, lastCursorPosition);
       noteTextareas[i].focus();
-      // var clickPos = event.target.selectionStart;
-      noteTextareas[i].setSelectionRange(0, 0);
       noteTextareas[i].scrollLeft = 0;
-      noteTextareas[i].scrollTop = 0;
     });
+    // stop editing
     noteTextarea.addEventListener("blur", function() {
       notePreviews[i].classList.remove("editing");
-    });
-    noteTextarea.addEventListener("keydown", function(event) {
-      // Ctrl+Enter exits editor mode
-      if (event.key == "Enter" && event.ctrlKey) {
-        notePreviews[i].classList.remove("editing");
-      }
+      lastCursorPosition = noteTextareas[i].selectionStart;
     });
   }
 
+  // Key Binds //
+  for (let i = 0; i < notePreviews.length; i++) {
+    // var preview = notePreviews[i].querySelector(".preview");
+    var noteTextarea = noteTextareas[i];
+    noteTextarea.addEventListener("keydown", function(event) {
+      // tab
+      if (event.key == "Tab") {
+        event.preventDefault();
+      }
+    });
+    // switch between markdown preview and editor via keybind 
+    document.addEventListener("keydown", function(event) {
+      if (event.key == "Enter" && event.ctrlKey) {
+        if (notePreviews[i].classList.contains("editing")) {
+          lastCursorPosition = noteTextareas[i].selectionStart;
+          notePreviews[i].classList.remove("editing");
+          // scroll preview
+        } else {
+          notePreviews[i].classList.add("editing");
+          noteTextareas[i].setSelectionRange(lastCursorPosition, lastCursorPosition);
+          noteTextareas[i].focus();
+          noteTextareas[i].scrollLeft = 0;
+        }
+      }
+    })
+  }
+    
   /* BACKUP */
   // Event listener for each backup button that downloads the note text
   // Currently, just 1 backup button which downloads all tab content so the loop is redundant
@@ -359,5 +399,6 @@ document.addEventListener("DOMContentLoaded", function() {
   /* ON STARTUP */
   loadTabNames();
   loadLastTab();
+  loadLastBackup();
 
 }); //DOMContentLoaded
